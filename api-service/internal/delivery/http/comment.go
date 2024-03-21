@@ -8,12 +8,18 @@ import (
 )
 
 func (h Handler) CreateComment(c *gin.Context) {
+	postId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, "invalid post id param")
+		return
+	}
 	var input model.Comment
 	if err := c.BindJSON(&input); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	err := h.services.Comment.Create(input)
+	input.PostId = postId
+	err = h.services.Comment.Create(input)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return

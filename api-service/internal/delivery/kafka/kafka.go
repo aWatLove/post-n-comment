@@ -44,7 +44,7 @@ func (k *Kafka) ProduceComment(comment model.Comment) error {
 	if err != nil {
 		return err
 	}
-	_, err = k.PostConn.Write(msg)
+	_, err = k.CommentConn.Write(msg)
 	if err != nil {
 		log.Printf("failed to write message: %s", err.Error())
 		return err

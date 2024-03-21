@@ -20,15 +20,15 @@ func (h Handler) InitRoutes() *gin.Engine {
 	{
 		post := api.Group("/post")
 		{
-			post.GET("/:id")
-			post.GET("/")
-			post.POST("/")
+			post.GET("/:id", h.getPostById)
+			post.GET("/", h.getAllPosts)
+			post.POST("/", h.CreatePost)
 
 			comment := post.Group("/:id/comment")
 			{
-				comment.POST("/")
-				comment.GET("/")
-				comment.GET("/:commentId")
+				comment.POST("/", h.CreateComment)
+				comment.GET("/", h.getAllComments)
+				comment.GET("/:commentId", h.getCommentById)
 			}
 		}
 

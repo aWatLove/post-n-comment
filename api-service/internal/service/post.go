@@ -22,45 +22,52 @@ func (p PostService) Create(post model.Post) error {
 	return p.kafka.ProducePost(post)
 }
 
+type dataPost struct {
+	data []model.Post
+}
+
 func (p PostService) GetAllPosts() ([]model.Post, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/post", p.dataServiceUrl))
+	resp, err := http.Get(fmt.Sprintf("%s/api/post", p.dataServiceUrl))
 	if err != nil {
 		log.Printf("error get request: %s", err.Error())
 		return nil, err
 	}
-	var data []byte
-	_, err = resp.Body.Read(data)
-	if err != nil {
-		log.Printf("error while reading response body: %s", err.Error())
-		return nil, err
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
+
 	var posts []model.Post
-	err = json.Unmarshal(data, &posts)
-	if err != nil {
-		log.Printf("error while unmarshaling []post: %s", err.Error())
+	if err := json.NewDecoder(resp.Body).Decode(&posts); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
 		return nil, err
 	}
+
 	return posts, nil
+
 }
 
 func (p PostService) GetPostById(id int) (model.Post, error) {
 	var post model.Post
-	resp, err := http.Get(fmt.Sprintf("%s/post/%d", p.dataServiceUrl, id))
+	resp, err := http.Get(fmt.Sprintf("%s/api/post/%d", p.dataServiceUrl, id))
 	if err != nil {
 		log.Printf("error get request: %s", err.Error())
 		return post, err
 	}
-	var data []byte
-	_, err = resp.Body.Read(data)
-	if err != nil {
-		log.Printf("error while reading response body: %s", err.Error())
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("unexpected status code: %d", resp.StatusCode)
 		return post, err
 	}
 
-	err = json.Unmarshal(data, &post)
-	if err != nil {
-		log.Printf("error while unmarshaling post: %s", err.Error())
+	if err := json.NewDecoder(resp.Body).Decode(&post); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
 		return post, err
 	}
+
 	return post, nil
+
 }

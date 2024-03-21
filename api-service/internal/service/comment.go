@@ -23,44 +23,45 @@ func (c CommentService) Create(comment model.Comment) error {
 }
 
 func (c CommentService) GetAllComments(id int) ([]model.Comment, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/post/%d/comment", c.dataServiceUrl, id))
+	resp, err := http.Get(fmt.Sprintf("%s/api/post/%d/comment", c.dataServiceUrl, id))
 	if err != nil {
 		log.Printf("error get request: %s", err.Error())
 		return nil, err
 	}
-	var data []byte
-	_, err = resp.Body.Read(data)
-	if err != nil {
-		log.Printf("error while reading response body: %s", err.Error())
-		return nil, err
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
+
 	var comments []model.Comment
-	err = json.Unmarshal(data, &comments)
-	if err != nil {
-		log.Printf("error while unmarshaling []comments: %s", err.Error())
+	if err = json.NewDecoder(resp.Body).Decode(&comments); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
 		return nil, err
 	}
+
 	return comments, nil
 }
 
 func (c CommentService) GetCommentById(postId, id int) (model.Comment, error) {
 	var comment model.Comment
-	resp, err := http.Get(fmt.Sprintf("%s/post/%d/comment/%d", c.dataServiceUrl, postId, id))
+	resp, err := http.Get(fmt.Sprintf("%s/api/post/%d/comment/%d", c.dataServiceUrl, postId, id))
 	if err != nil {
 		log.Printf("error get request: %s", err.Error())
 		return comment, err
 	}
-	var data []byte
-	_, err = resp.Body.Read(data)
-	if err != nil {
-		log.Printf("error while reading response body: %s", err.Error())
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("unexpected status code: %d", resp.StatusCode)
 		return comment, err
 	}
 
-	err = json.Unmarshal(data, &comment)
-	if err != nil {
-		log.Printf("error while unmarshaling comment: %s", err.Error())
+	if err = json.NewDecoder(resp.Body).Decode(&comment); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
 		return comment, err
 	}
+
 	return comment, nil
 }
