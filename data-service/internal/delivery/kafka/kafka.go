@@ -26,9 +26,18 @@ func (k *Kafka) NewConnect(ctx context.Context, network, address, topic string, 
 	return con, nil
 }
 
-func (k *Kafka) SubscribePost(conn *kafka.Conn) error {
+func (k *Kafka) NewReaderConn(address, groupId, topic string) *kafka.Reader {
+	return kafka.NewReader(kafka.ReaderConfig{
+		Brokers:  []string{address},
+		GroupID:  groupId,
+		Topic:    topic,
+		MaxBytes: 10e6, // 10MB
+	})
+}
+
+func (k *Kafka) SubscribePost(r *kafka.Reader) error {
 	for {
-		msg, err := conn.ReadMessage(10e6)
+		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			log.Printf("kafka: error while reading message: %s", err.Error())
 			continue
@@ -49,9 +58,9 @@ func (k *Kafka) SubscribePost(conn *kafka.Conn) error {
 	}
 }
 
-func (k *Kafka) SubscribeComment(conn *kafka.Conn) error {
+func (k *Kafka) SubscribeComment(r *kafka.Reader) error {
 	for {
-		msg, err := conn.ReadMessage(10e6)
+		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			log.Printf("kafka: error while reading message: %s", err.Error())
 			continue

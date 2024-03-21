@@ -46,27 +46,21 @@ func main() {
 	var wg sync.WaitGroup
 	k := kafka.NewKafka(services)
 	kAddress := fmt.Sprintf("%s:%s", os.Getenv("KAFKA_ADDRESS"), os.Getenv("KAFKA_PORT"))
-	kNetwork := os.Getenv("KAFKA_NETWORK")
+	readerPost := k.NewReaderConn(kAddress, "main-group", os.Getenv("KAFKA_TOPIC_POST"))
+	readerComment := k.NewReaderConn(kAddress, "main-group", os.Getenv("KAFKA_TOPIC_COMMENT"))
+
 	// post topic connection and consume
-	kConnPost, err := k.NewConnect(context.Background(), kNetwork, kAddress, os.Getenv("KAFKA_TOPIC_POST"), 0)
-	if err != nil {
-		log.Fatalf("error while connecting kafka on topic post: %s", err)
-	}
 	wg.Add(1)
 	go func() {
-		if err = k.SubscribePost(kConnPost); err != nil {
+		if err = k.SubscribePost(readerPost); err != nil {
 			log.Fatalf("error while consume post topic: %s", err.Error())
 		}
 	}()
 
 	// comment topic connection and consume
-	kConnComment, err := k.NewConnect(context.Background(), kNetwork, kAddress, os.Getenv("KAFKA_TOPIC_COMMENT"), 0)
-	if err != nil {
-		log.Fatalf("error while connecting kafka on topic comment: %s", err)
-	}
 	wg.Add(1)
 	go func() {
-		if err = k.SubscribeComment(kConnComment); err != nil {
+		if err = k.SubscribeComment(readerComment); err != nil {
 			log.Fatalf("error while consume comment topic: %s", err.Error())
 		}
 	}()
@@ -97,12 +91,12 @@ func main() {
 		log.Printf("error while closing db connection: %s", err.Error())
 	}
 
-	if err = kConnPost.Close(); err != nil {
+	if err = readerPost.Close(); err != nil {
 		log.Printf("error while closing kafka post topic connection: %s", err.Error())
 	}
 	wg.Done()
 
-	if err = kConnComment.Close(); err != nil {
+	if err = readerComment.Close(); err != nil {
 		log.Printf("error while closing kafka comment topic connection: %s", err.Error())
 	}
 	wg.Done()
