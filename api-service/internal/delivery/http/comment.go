@@ -6,25 +6,25 @@ import (
 	"net/http"
 )
 
-func (h Handler) CreatePost(c *gin.Context) {
-	var input model.Post
+func (h Handler) CreateComment(c *gin.Context) {
+	var input model.Comment
 	if err := c.BindJSON(&input); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	err := h.services.Post.Create(input)
+	err := h.services.Comment.Create(input)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, "post created!")
+	c.JSON(http.StatusOK, "comment created!")
 }
 
-func (h Handler) getAllPosts(c *gin.Context) {
+func (h Handler) getAllComments(c *gin.Context) {
 
 }
 
-func (h Handler) getPostById(c *gin.Context) {
+func (h Handler) getCommentById(c *gin.Context) {
 
 }
