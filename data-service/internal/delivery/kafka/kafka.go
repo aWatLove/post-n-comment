@@ -20,6 +20,7 @@ func NewKafka(service *service.Service) *Kafka {
 func (k *Kafka) NewConnect(ctx context.Context, network, address, topic string, partition int) (*kafka.Conn, error) {
 	con, err := kafka.DialLeader(ctx, network, address, topic, partition)
 	if err != nil {
+		log.Printf("failed to dial leader: %s", err.Error())
 		return nil, err
 	}
 	return con, nil
