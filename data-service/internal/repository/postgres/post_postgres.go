@@ -10,7 +10,7 @@ type PostPostgres struct {
 }
 
 func (p PostPostgres) Create(post model.Post) (int, error) {
-	result := p.db.Create(post)
+	result := p.db.Create(&post)
 	if result.Error != nil {
 		return 0, result.Error
 	}

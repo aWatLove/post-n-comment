@@ -60,7 +60,7 @@ func main() {
 	}()
 
 	// comment topic connection and consume
-	kConnComment, err := k.NewConnect(context.Background(), kNetwork, kAddress, os.Getenv("KAFKA_TOPIC_POST"), 0)
+	kConnComment, err := k.NewConnect(context.Background(), kNetwork, kAddress, os.Getenv("KAFKA_TOPIC_COMMENT"), 0)
 	if err != nil {
 		log.Fatalf("error while connecting kafka on topic comment: %s", err)
 	}

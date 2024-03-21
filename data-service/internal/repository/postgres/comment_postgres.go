@@ -11,7 +11,7 @@ type CommentPostgres struct {
 
 // todo сделать проверку на наличие поста
 func (c CommentPostgres) Create(comment model.Comment) (int, error) {
-	result := c.db.Create(comment)
+	result := c.db.Create(&comment)
 	if result.Error != nil {
 		return 0, result.Error
 	}

@@ -12,7 +12,6 @@ func (h Handler) getAllPosts(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-
 	c.JSON(http.StatusOK, posts)
 }
 
