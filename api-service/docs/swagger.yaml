@@ -1,0 +1,366 @@
+basePath: /
+definitions:
+  model.Comment:
+    properties:
+      CreatedAt:
+        format: "2021-11-26T06:22:19Z"
+        type: string
+      author:
+        type: string
+      id:
+        type: integer
+      post_id:
+        type: integer
+      text:
+        type: string
+    type: object
+  model.CommentRequest:
+    properties:
+      author:
+        type: string
+      text:
+        type: string
+    type: object
+  model.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  model.Post:
+    properties:
+      CreatedAt:
+        format: "2021-11-26T06:22:19Z"
+        type: string
+      author:
+        type: string
+      id:
+        type: integer
+      text:
+        type: string
+    type: object
+  model.PostRequest:
+    properties:
+      author:
+        type: string
+      text:
+        type: string
+    type: object
+  model.TopAuthors:
+    properties:
+      author:
+        type: string
+      posts:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: Suvorov Vladislav
+  title: API-SERVICE
+  version: "1.0"
+paths:
+  /api/author/post/{author}:
+    get:
+      consumes:
+      - application/json
+      description: Get author's posts
+      operationId: getbyauthor-post
+      parameters:
+      - description: Author name
+        in: path
+        name: author
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get by Author
+      tags:
+      - authors
+  /api/author/top:
+    get:
+      consumes:
+      - application/json
+      description: get top authors
+      operationId: gettop-authors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TopAuthors'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get top
+      tags:
+      - authors
+  /api/comment:
+    post:
+      consumes:
+      - application/json
+      description: create comment
+      operationId: create-comment
+      parameters:
+      - description: Comment info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Create
+      tags:
+      - comments
+  /api/post:
+    get:
+      consumes:
+      - application/json
+      description: get all posts
+      operationId: getall-posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get all
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      description: create post
+      operationId: create-post
+      parameters:
+      - description: Post info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.PostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Create
+      tags:
+      - posts
+  /api/post/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get post by id
+      operationId: getbyid-post
+      parameters:
+      - description: Post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get by Id
+      tags:
+      - posts
+  /api/post/{id}/comment:
+    get:
+      consumes:
+      - application/json
+      description: get all comments
+      operationId: getall-comments
+      parameters:
+      - description: Post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Comment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get all
+      tags:
+      - comments
+  /api/post/{id}/comment/{commentId}:
+    get:
+      consumes:
+      - application/json
+      description: Get comment by id
+      operationId: getbyid-comment
+      parameters:
+      - description: Post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Comment id
+        in: path
+        name: commentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get by Id
+      tags:
+      - comments
+  /api/post/top:
+    get:
+      consumes:
+      - application/json
+      description: get top posts
+      operationId: gettop-posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get top
+      tags:
+      - posts
+swagger: "2.0"

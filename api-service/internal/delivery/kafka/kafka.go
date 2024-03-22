@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/segmentio/kafka-go"
 	"log"
+	"time"
 )
 
 type Kafka struct {
@@ -21,7 +22,15 @@ func NewConnect(ctx context.Context, network, address, topic string, partition i
 	con, err := kafka.DialLeader(ctx, network, address, topic, partition)
 	if err != nil {
 		log.Printf("failed to dial leader: %s", err.Error())
-		return nil, err
+	}
+	for err != nil {
+		con, err = kafka.DialLeader(ctx, network, address, topic, partition)
+		if err != nil {
+			log.Printf("failed to dial leader: %s", err.Error())
+			log.Printf("retry to connection after 5 seconds")
+			time.Sleep(5 * time.Second)
+		}
+
 	}
 	return con, nil
 }

@@ -13,6 +13,13 @@ import (
 	"syscall"
 )
 
+// @title API-SERVICE
+// @version 1.0
+// @contact.name Suvorov Vladislav
+
+// @host localhost:8080
+// @BasePath /
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("error while initializing .env variables: %s", err.Error())
