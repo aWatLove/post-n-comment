@@ -42,7 +42,6 @@ func (k *Kafka) SubscribePost(r *kafka.Reader) error {
 			log.Printf("kafka: error while reading message: %s", err.Error())
 			continue
 		}
-
 		post, err := k.UnmarshalPost(msg.Value)
 		if err != nil {
 			log.Printf("kafka: error while unmarshalling message: %s", err.Error())

@@ -30,3 +30,31 @@ func (h Handler) getPostById(c *gin.Context) {
 
 	c.JSON(http.StatusOK, post)
 }
+
+func (h Handler) getTopPosts(c *gin.Context) {
+	posts, err := h.services.Post.GetTopPosts()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, posts)
+}
+
+func (h Handler) getTopAuthors(c *gin.Context) {
+	topAuthors, err := h.services.Post.GetTopAuthors()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, topAuthors)
+}
+
+func (h Handler) getAuthorsPosts(c *gin.Context) {
+	authorName := c.Param("author")
+	posts, err := h.services.Post.GetAllAuthorsPost(authorName)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, posts)
+}
