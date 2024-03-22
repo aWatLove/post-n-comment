@@ -9,6 +9,9 @@ type Post interface {
 	Create(model.Post) error
 	GetAllPosts() ([]model.Post, error)
 	GetPostById(int) (model.Post, error)
+	GetTopPosts() ([]model.Post, error)
+	GetAllAuthorsPost(string) ([]model.Post, error)
+	GetTopAuthors() ([]model.TopAuthors, error)
 }
 
 type Comment interface {

@@ -18,10 +18,17 @@ func (h Handler) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api")
 	{
+		author := api.Group("/author")
+		{
+			author.GET("/top", h.getTopAuthors)
+			author.GET("/post/:author", h.getAuthorsPosts)
+			// author.GET("/comment/:author") // все комментарии автора
+		}
 		post := api.Group("/post")
 		{
 			post.GET("/:id", h.getPostById)
 			post.GET("/", h.getAllPosts)
+			post.GET("/top", h.getTopPosts)
 			post.POST("/", h.CreatePost)
 
 			comment := post.Group("/:id/comment")

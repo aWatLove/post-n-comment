@@ -71,3 +71,66 @@ func (p PostService) GetPostById(id int) (model.Post, error) {
 	return post, nil
 
 }
+
+func (p PostService) GetTopPosts() ([]model.Post, error) {
+	resp, err := http.Get(fmt.Sprintf("%s/api/post/top", p.dataServiceUrl))
+	if err != nil {
+		log.Printf("error get request: %s", err.Error())
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var posts []model.Post
+	if err := json.NewDecoder(resp.Body).Decode(&posts); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+func (p PostService) GetAllAuthorsPost(s string) ([]model.Post, error) {
+	resp, err := http.Get(fmt.Sprintf("%s/api/author/post/%s", p.dataServiceUrl, s))
+	if err != nil {
+		log.Printf("error get request: %s", err.Error())
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var posts []model.Post
+	if err := json.NewDecoder(resp.Body).Decode(&posts); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+func (p PostService) GetTopAuthors() ([]model.TopAuthors, error) {
+	resp, err := http.Get(fmt.Sprintf("%s/api/author/top", p.dataServiceUrl))
+	if err != nil {
+		log.Printf("error get request: %s", err.Error())
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var topAuthors []model.TopAuthors
+	if err := json.NewDecoder(resp.Body).Decode(&topAuthors); err != nil {
+		log.Printf("error while decoding response body: %s", err.Error())
+		return nil, err
+	}
+
+	return topAuthors, nil
+}
